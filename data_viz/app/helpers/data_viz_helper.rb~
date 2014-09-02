@@ -1,5 +1,0 @@
-module DataVisHelper
-   def helloworld
-       "HELLO LE FUCKING WORLD!"
-   end
-end

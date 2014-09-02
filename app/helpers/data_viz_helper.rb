@@ -1,5 +1,5 @@
 module DataVizHelper
    def helloworld
-       "HELLO LE FUCKING WORLD!"
+       "hello world!"
    end
 end

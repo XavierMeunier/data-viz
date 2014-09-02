@@ -32,6 +32,7 @@ tmp
 ## Environment normalisation:
 /.bundle
 /vendor/bundle
+/test_gem/
 
 
 ############################

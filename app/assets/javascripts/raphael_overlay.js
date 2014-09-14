@@ -68,6 +68,11 @@ window.onload = function () {
 
   var is_drag = false;
 
+  // function generate_x_rect() {
+
+  //   x = Math.floor((Math.random() * 500) + 50);
+  // }
+
   function get_text_element(class_name) {
     for (i = 0; i < texts.length; i++) {
       data = texts[i].data('name');
@@ -88,7 +93,13 @@ window.onload = function () {
     return false;
   }
 
-  function to_camelize(str) {
+  function to_camelize(str, has_many) {
+    if (has_many == true) {
+      str = str[0].toUpperCase() + str.slice(1, relation.length - 1);
+    }
+    else {
+      str = str[0].toUpperCase() + str.slice(1);
+    }
     return str.replace(/_\w/g,function(match){return match[1].toUpperCase()})
   }
 
@@ -99,52 +110,104 @@ window.onload = function () {
     if (is_current_attribute_link_object(element)) {
       for (i = 0; i < group_attributes.length; i++) {
         name = group_attributes[i].attr('text');
-        if (width < initialize_rect_width(name)) {
-          width = initialize_rect_width(name);
+        if (width < initialize_rect_width(name, true)) {
+          width = initialize_rect_width(name, true);
         }
       }
     }
 
-    if (width < initialize_rect_width(element_name)) {
-      width = initialize_rect_width(element_name);
+    if (width < initialize_rect_width(element_name, false)) {
+      width = initialize_rect_width(element_name, false);
     }
     return width;
   }
 
-  function initialize_rect_width(class_name) {
-    return (class_name.length * 10);
+  function initialize_rect_width(class_name, attribute) {
+    mul = 12;
+    if (attribute == true) {
+      mul = 6;
+    }
+    return (class_name.length * mul);
   }
 
   function resize_all_element() {
-    // group.attr('width', 60);
-    // group.attr('height', 40);
     for (i = 0; i < shapes.length; i++) {
         shapes[i].attr('height', 40);        
         shapes[i].attr('width', calcul_rect_width(shapes[i]));
-        // if (shapes[i].glow) {
-        //   shapes[i].glow.remove();
-        // }
+    }
+  }
+
+  function get_linked_object(element) {
+    link_objects = [];
+    for (key in model) {
+      if (key == element.data('name')) {
+        for (relation in model[key].relations) {
+          if (model[key].relations[relation] == "has_many") {
+            link_objects.push(to_camelize(relation, true));
+          }
+          else {
+           link_objects.push(to_camelize(relation, false));
+          }
+        }
+      }
+    }
+    return link_objects;
+  }
+
+  function glow_all_link_object(element) {
+
+    // Get the current open object if it's not the element in input
+    if (!is_current_attribute_link_object(element)) {
+      for (i = 0; i < shapes.length; i++) {
+        if (is_current_attribute_link_object(shapes[i])) {
+          element = shapes[i];
+        }
+      }
+    }
+
+    // Glow the object itself
+    glow.push(element.glow({color: element.attr('fill'), opacity: 0.5, width:3}));
+
+    // Get all linked object of input element
+    link_objects = get_linked_object(element);
+
+    // Glow all link object
+    for (x = 0; x < link_objects.length; x++) {
+      for (i = 0; i < shapes.length; i++) {
+        if (shapes[i].data('name') == link_objects[x]) {
+          glow.push(shapes[i].glow({color: shapes[i].attr('fill'), opacity: 0.5, width:3}));
+        }
+      }
     }
   }
 
   var color, i, ii, tempS, tempT, 
     dragger = function () {
-        // Original coords for main element
-        this.ox = this.type == "ellipse" ? this.attr("cx") : this.attr("x");
-        this.oy = this.type == "ellipse" ? this.attr("cy") : this.attr("y");
-        if (this.type != "text") this.animate({"fill-opacity": .2}, 500);
-            
-        // Original coords for pair element
-        this.pair.ox = this.pair.type == "ellipse" ? this.pair.attr("cx") : this.pair.attr("x");
-        this.pair.oy = this.pair.type == "ellipse" ? this.pair.attr("cy") : this.pair.attr("y");
-        if (this.pair.type != "text") this.pair.animate({"fill-opacity": .2}, 500);
 
-        if (is_current_attribute_link_object(this)) {          
-          for (i = 0; i < group_attributes.length; i++) {
-            group_attributes[i].ox = group_attributes[i].attr('x');
-            group_attributes[i].oy = group_attributes[i].attr('y');
-          }          
-        }
+    // Clear all glow object
+      if (glow) { 
+        glow.remove(); 
+        glow.clear();
+      }
+
+      // Original coords for main element
+      this.ox = this.type == "ellipse" ? this.attr("cx") : this.attr("x");
+      this.oy = this.type == "ellipse" ? this.attr("cy") : this.attr("y");
+      if (this.type != "text") this.animate({"fill-opacity": .2}, 500);
+          
+      // Original coords for pair element
+      this.pair.ox = this.pair.type == "ellipse" ? this.pair.attr("cx") : this.pair.attr("x");
+      this.pair.oy = this.pair.type == "ellipse" ? this.pair.attr("cy") : this.pair.attr("y");
+      if (this.pair.type != "text") this.pair.animate({"fill-opacity": .2}, 500);
+
+      // Get and store attribute position
+      if (is_current_attribute_link_object(this)) {
+        for (i = 0; i < group_attributes.length; i++) {
+          group_attributes[i].ox = group_attributes[i].attr('x');
+          group_attributes[i].oy = group_attributes[i].attr('y');
+        }          
+      }
+
     },
     move = function (dx, dy) {
         is_drag = true;
@@ -164,7 +227,7 @@ window.onload = function () {
           for (i = 0; i < group_attributes.length; i++) {
             att = {x: group_attributes[i].ox + dx, y: group_attributes[i].oy + dy};
             group_attributes[i].attr(att);
-          }            
+          }
         }
         
         // Move connections
@@ -185,7 +248,7 @@ window.onload = function () {
         // group.attr('width', 60);
         // group.attr('height', 40);
 
-        // Remove and clear group about attribute elements
+        // Remove and clear attribute group elements
         group_attributes.remove();
         group_attributes.clear();
 
@@ -199,6 +262,11 @@ window.onload = function () {
         }
 
         if (change_rect == true) {
+
+          if (glow) { 
+            glow.remove(); 
+            glow.clear();
+          }
 
           // Get class name 
           rect_data = element.data('name');
@@ -230,19 +298,8 @@ window.onload = function () {
 
             }
           }
-
-          // alert(text.getBBox().x);
-          // if (element.type != "text") element.animate({"fill-opacity": .2}, 500);
-          // if (element.pair.type != "text") element.pair.animate({"fill-opacity": 0}, 500);
-          // element.animate({"fill-opacity": .2}, 500);
-
-          /* Change size of the element */
-          // element.attr('width', max_length);
           element.attr('width', calcul_rect_width(element));
           element.attr('height', y);
-          // glow = element.glow({color: element.attr('fill'), opacity: 0.3});
-          // glow.
-          // group_glows.push(glow);
         }
 
         for (i = connections.length; i--;) {
@@ -252,11 +309,12 @@ window.onload = function () {
         r.safari();
       }
 
-      // Fade original element on mouse up
-      // if (element.type != "text" && element.attr('height') == 40) element.animate({"fill-opacity": 0}, 500);
-      
-      // Fade paired element on mouse up
-      // if (element.pair.type != "text") element.pair.animate({"fill-opacity": 0}, 500);
+      // if (is_current_attribute_link_object(element)) {
+      if (group_attributes.length > 0) {
+        glow_all_link_object(element);
+      }
+        // glow = element.glow({color: element.attr('fill'), opacity: 0.5, width:3});
+      // }
 
       is_drag = false;
     },
@@ -264,7 +322,7 @@ window.onload = function () {
     r = Raphael("data_viz_model", 640, 480),
     group = r.set();
     group_attributes = r.set();
-    group_glows = r.set();
+    glow = r.set();
     texts_attributes = [],
     connections = [],
     shapes = [],
@@ -274,13 +332,16 @@ window.onload = function () {
     for (var key in model) {
       // use hasOwnProperty to filter out keys from the Object.prototype
       if (model.hasOwnProperty(key) && key != "date") {
-        x = Math.floor((Math.random() * 500) + 50);
-        y = Math.floor((Math.random() * 300) + 50);
+        // x = Math.floor((Math.random() * 500) + 50);
+        // y = Math.floor((Math.random() * 300) + 50);
+
+        x = generate_x_rect();
+        y = generate_y_rect();
 
         // shapes.push(r.ellipse(x, y, 30, 20));
 
 
-        rect_width = initialize_rect_width(key);
+        rect_width = initialize_rect_width(key, false);
 
         var rect = r.rect(x, y, rect_width, 40, 10);
         var text = r.text(x + rect_width / 2, y + 20, key);
@@ -305,16 +366,16 @@ window.onload = function () {
         for (var relation in model[key].relations) {
           relation_level = model[key].relations[relation];
           if (relation_level && relation_level == "has_many") {
-            class_name = relation[0].toUpperCase() + relation.slice(1, relation.length - 1);
-            class_name = to_camelize(class_name);
+            // class_name = relation[0].toUpperCase() + relation.slice(1, relation.length - 1);
+            class_name = to_camelize(relation, true);
             index = data.indexOf(class_name);
             if (index >= 0) {
               connections.push(r.connection(shapes[i], shapes[index], "#616161", "#616161"));
             }
           }
           else if (relation_level && relation_level == "has_one") {
-            class_name = relation[0].toUpperCase() + relation.slice(1);
-            class_name = to_camelize(class_name);
+            // class_name = relation[0].toUpperCase() + relation.slice(1);
+            class_name = to_camelize(relation, false);
 
             index = data.indexOf(class_name);
             if (index >= 0) {

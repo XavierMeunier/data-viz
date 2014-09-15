@@ -1,4 +1,4 @@
-//= require raphael.js
+//= require raphael-min.js
 //= require jquery
 
 $(document).ready(function(){

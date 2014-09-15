@@ -68,10 +68,23 @@ window.onload = function () {
 
   var is_drag = false;
 
-  // function generate_x_rect() {
-
-  //   x = Math.floor((Math.random() * 500) + 50);
-  // }
+  function generate_rect_position(rect_width) {
+    output_position = {};
+    // Generate random x according to existing objects
+    output_position['x'] = Math.floor((Math.random() * 500 - rect_width) + rect_width);
+    output_position['y'] = Math.floor((Math.random() * 300) + 50);
+    for (i = 0; i < shapes.length; i++) {
+      rect_x = shapes[i].attr('x');
+      rect_y = shapes[i].attr('y');
+      width = shapes[i].attr('width');
+      height = shapes[i].attr('height');
+      if ((output_position['x'] >= rect_x && output_position['x'] <= rect_x + width)
+          || (output_position['y'] >= rect_y && output_position['y'] <= rect_y + height)) {
+        generate_rect_position(rect_width);
+      }
+    }
+    return output_position;
+  }
 
   function get_text_element(class_name) {
     for (i = 0; i < texts.length; i++) {
@@ -335,13 +348,15 @@ window.onload = function () {
         // x = Math.floor((Math.random() * 500) + 50);
         // y = Math.floor((Math.random() * 300) + 50);
 
-        x = generate_x_rect();
-        y = generate_y_rect();
+        rect_width = initialize_rect_width(key, false);
+
+        position = generate_rect_position(rect_width);
+
+        x = position['x'];
+        y = position['y'];
 
         // shapes.push(r.ellipse(x, y, 30, 20));
 
-
-        rect_width = initialize_rect_width(key, false);
 
         var rect = r.rect(x, y, rect_width, 40, 10);
         var text = r.text(x + rect_width / 2, y + 20, key);

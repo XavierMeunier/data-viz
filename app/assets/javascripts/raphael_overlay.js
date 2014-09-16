@@ -3,8 +3,9 @@
 
 $(document).ready(function(){
 
+  var model = $('#dataviz_model').data('model');
 
-  var model = $('#data_viz_model').data('model');
+  console.log(model);
 
   Raphael.fn.connection = function (obj1, obj2, line, bg) {
     if (obj1.line && obj1.from && obj1.to) {
@@ -332,7 +333,7 @@ window.onload = function () {
       is_drag = false;
     },
 
-    r = Raphael("data_viz_model", 640, 480),
+    r = Raphael("dataviz_model", 640, 480),
     group = r.set();
     group_attributes = r.set();
     glow = r.set();

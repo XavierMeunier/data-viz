@@ -1,11 +1,8 @@
 //= require raphael-min.js
 //= require jquery
-
 $(document).ready(function(){
 
   var model = $('#dataviz_model').data('model');
-
-  console.log(model);
 
   Raphael.fn.connection = function (obj1, obj2, line, bg) {
     if (obj1.line && obj1.from && obj1.to) {
@@ -68,6 +65,47 @@ $(document).ready(function(){
 window.onload = function () {
 
   var is_drag = false;
+
+  $('#save_position').on('click', function() {
+
+    for (i = 0; i < shapes.length; i++) {
+      shape_name = shapes[i].data('name');
+      for (var key in model) {
+        if (key == shape_name) {
+          model[key].position = {};
+          model[key].position['x'] = shapes[i].attr('x');
+          model[key].position['y'] = shapes[i].attr('y');
+        }
+      }
+    }
+
+    $('#dataviz_model').attr('data-model', JSON.stringify(model));
+
+    save_json = $.ajax({
+             type:'POST', 
+             url: '/save_json',
+             dataType : 'json',
+             data: model
+      });
+
+    save_json.success(function(data){
+        console.log(data.message);
+        notification(data.message, data.response);
+    }).error(function(response){
+        console.log(response.message);
+        notification(data.message, data.response);
+    });
+  });
+
+  function notification(text, response) {
+    if (response) {
+      $('<div>'+text+'</div>').appendTo('body');
+    }
+    else {
+     $('<div>'+text+'</div>').appendTo('body'); 
+    }
+
+  }
 
   function generate_rect_position(rect_width) {
     output_position = {};

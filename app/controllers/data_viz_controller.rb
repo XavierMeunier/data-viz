@@ -1,4 +1,7 @@
 class DataVizController < ActionController::Base
+
+  def display
+  end
   
   def save_json
     

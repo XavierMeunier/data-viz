@@ -1,4 +1,4 @@
-
 Rails.application.routes.draw do
-  match '/save_json'        , to: 'data_viz#save_json' , via: 'post'
+  match '/display_data_viz' , to: 'data_viz#display'    , via: 'get', as: 'data_viz'
+  match '/save_json'        , to: 'data_viz#save_json'  , via: 'post'
 end

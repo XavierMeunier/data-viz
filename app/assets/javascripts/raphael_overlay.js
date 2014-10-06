@@ -85,14 +85,12 @@ window.onload = function () {
              type:'POST', 
              url: '/save_json',
              dataType : 'json',
-             data: model
+             data: {data_model: model}
       });
 
     save_json.success(function(data){
-        console.log(data.message);
         notification(data.message, data.response);
     }).error(function(response){
-        console.log(response.message);
         notification(data.message, data.response);
     });
   });
@@ -384,18 +382,21 @@ window.onload = function () {
     for (var key in model) {
       // use hasOwnProperty to filter out keys from the Object.prototype
       if (model.hasOwnProperty(key) && key != "date") {
-        // x = Math.floor((Math.random() * 500) + 50);
-        // y = Math.floor((Math.random() * 300) + 50);
 
         rect_width = initialize_rect_width(key, false);
 
-        position = generate_rect_position(rect_width);
+        /* if some positions already exist */
+        if (model[key]['position'] != null && model[key]['position']['x'] != null && model[key]['position']['x'] > 0
+            && model[key]['position']['y'] != null && model[key]['position']['y'] > 0) {
+          x = parseInt(model[key]['position']['x'], 10);
+          y = parseInt(model[key]['position']['y'], 10);
+        }
+        else {
+          position = generate_rect_position(rect_width);
 
-        x = position['x'];
-        y = position['y'];
-
-        // shapes.push(r.ellipse(x, y, 30, 20));
-
+          x = position['x'];
+          y = position['y'];
+        }
 
         var rect = r.rect(x, y, rect_width, 40, 10);
         var text = r.text(x + rect_width / 2, y + 20, key);

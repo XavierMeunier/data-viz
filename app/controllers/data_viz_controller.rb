@@ -5,7 +5,7 @@ class DataVizController < ActionController::Base
   
   def save_json
 
-    new_position = params
+    new_position = params[:data_model]
 
     @response = {
       response: 0,
@@ -14,7 +14,7 @@ class DataVizController < ActionController::Base
 
     unless new_position.blank?
 
-      path = "files/data_viz/" # to configurate
+      path = "files/data_viz/" # configuration
       filename = (new_position[:date].blank?) ? new_position[:date] : DateTime.now.strftime("%Y%m%d_%H%M%S")
       filename += "_data_viz"
 

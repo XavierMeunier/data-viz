@@ -1,4 +1,9 @@
 class DataModelViz
+
+	##################################
+	###### GENERATE MODEL JSON #######
+	##################################
+
 	def self.generate_json
 		output_json = {date: DateTime.now.strftime("%Y%m%d_%H%M%S")}
 
@@ -39,4 +44,23 @@ private
 		end
 		relations_hash
 	end
+
+
+	##################################
+	######## SAVE MODEL FILE #########
+	##################################
+
+	def self.create_directory(path)
+		FileUtils.mkdir_p(path) unless File.exists?(path)
+	end
+
+	def self.save_model(path, filename, model)
+		# path = "files/#{folder}/"
+		self.create_directory(path)
+		new_file = File.open("#{path}/#{filename}.txt", "w+")
+		new_file.write(model)
+		new_file.close
+		Rails.logger.debug "Je viens d'enregistrer le fichier!!!!"
+	end
+
 end

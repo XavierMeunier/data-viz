@@ -5,7 +5,7 @@ class DataModelViz
 	##################################
 
 	def self.get_json_from_file(path)
-		data_viz_files = Dir.glob("#{path}/*.txt") # more precision
+		data_viz_files = Dir.glob("#{path}/*.txt").sort! # more precision
 		if !data_viz_files.empty?
 			filename = data_viz_files.last
 			File.read("#{filename}")

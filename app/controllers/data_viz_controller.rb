@@ -15,7 +15,7 @@ class DataVizController < ActionController::Base
     unless new_position.blank?
 
       path = "files/data_viz/" # configuration
-      filename = (new_position[:date].blank?) ? new_position[:date] : DateTime.now.strftime("%Y%m%d_%H%M%S")
+      filename = (new_position[:date].blank?) ? new_position[:date] : DateTime.now.strftime("%Y%m%d%H%M%S")
       filename += "_data_viz"
 
       DataModelViz.save_model(path, filename, new_position)

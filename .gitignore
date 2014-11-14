@@ -27,11 +27,17 @@ test/tmp
 test/version_tmp
 tmp
 
+################################
+## Environment normalisation: ##
+################################
 
-
-## Environment normalisation:
 /.bundle
 /vendor/bundle
+
+###########
+## TESTS ##
+###########
+
 /test_gem/
 
 

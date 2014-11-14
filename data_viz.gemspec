@@ -1,4 +1,4 @@
-# coding: utf-8
+# encoding: utf-8
 lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'data_viz/version'
@@ -6,12 +6,12 @@ require 'data_viz/version'
 Gem::Specification.new do |spec|
   spec.name          = "data_viz"
   spec.version       = DataViz::VERSION
-  spec.authors       = ["gpattus"]
-  spec.email         = ["pattusg@gmail.com"]
-  spec.summary       = %q{TODO: Write a short summary. Required.}
-  spec.description   = %q{TODO: Write a longer description. Optional.}
+  spec.authors       = ["gpattus", "XavierMeunier"]
+  spec.email         = ["pattusg@gmail.com", "m.xaviermeunier@gmail.com"]
+  spec.summary       = "DataViz is a gem which allow you to visualize your models on a graphic way"
+  spec.description   = "DataViz is a gem which allow you to visualize your models on a graphic way with multiple parameters. You can save the way you want it to be displayed and choose among multiple options to display only parts of it. It also writes an historic of your models through time."
   spec.homepage      = ""
-  spec.license       = "MIT"
+  spec.license       = "GPL-2.0"
 
   spec.files         = `git ls-files -z`.split("\x0")
   spec.executables   = spec.files.grep(%r{^bin/}) { |f| File.basename(f) }

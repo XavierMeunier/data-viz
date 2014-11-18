@@ -1,6 +1,7 @@
 class DataVizController < ActionController::Base
 
   def display
+    @data_model_json = DataViz.generate_json
   end
   
   def save_json
@@ -18,7 +19,7 @@ class DataVizController < ActionController::Base
       filename = (new_position[:date].blank?) ? new_position[:date] : DateTime.now.strftime("%Y%m%d%H%M%S")
       filename += "_data_viz"
 
-      DataModelViz.save_model(path, filename, new_position)
+      DataViz.save_model(path, filename, new_position)
 
       @response[:response] = 1
       @response[:message] = "Model positions are saved"

@@ -1,7 +1,6 @@
-# encoding: utf-8
-lib = File.expand_path('../lib', __FILE__)
-$LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'data_viz/version'
+# -*- encoding: utf-8 -*-
+$:.push File.expand_path("../lib", __FILE__)
+require "data_viz/version"
 
 Gem::Specification.new do |spec|
   spec.name          = "data_viz"
